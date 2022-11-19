@@ -25,6 +25,7 @@ impl<'a> TryFrom<RendererStateBuilderWithTarget<'a>> for RendererState {
     fn try_from(builder: RendererStateBuilderWithTarget) -> Result<Self, Self::Error> {
         let instance = wgpu::Instance::new(builder.backends);
         let surface = unsafe { instance.create_surface(builder.target.window) };
+        let surface_size = builder.target.window.inner_size();
         let adapter = {
             let future_adapter = instance.request_adapter(
                 &wgpu::RequestAdapterOptions {
@@ -37,14 +38,6 @@ impl<'a> TryFrom<RendererStateBuilderWithTarget<'a>> for RendererState {
                 return Result::Err(());
             };
             adapter
-        };
-        let surface_size: Dimension2Du32 = {
-            let inner_size = builder.target.window.inner_size();
-            let surface_size = Dimension2Du32 {
-                vertical: inner_size.height as u32,
-                horizontal: inner_size.width as u32,
-            };
-            surface_size
         };
         let (device, queue): (wgpu::Device, wgpu::Queue) = {
             let future_device_queue = adapter.request_device(
@@ -66,8 +59,8 @@ impl<'a> TryFrom<RendererStateBuilderWithTarget<'a>> for RendererState {
         let surface_configuration = wgpu::SurfaceConfiguration {
             usage: wgpu::TextureUsages::RENDER_ATTACHMENT,
             format: surface_preferred_format,
-            width: surface_size.horizontal,
-            height: surface_size.vertical,
+            width: surface_size.width,
+            height: surface_size.height,
             present_mode: builder.target.present_mode,
             alpha_mode: builder.target.alpha_mode,
         };
