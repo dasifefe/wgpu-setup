@@ -28,7 +28,7 @@ impl<'a> TryFrom<RendererStateBuilderWithTarget<'a>> for RendererState {
         let adapter = {
             let future_adapter = instance.request_adapter(
                 &wgpu::RequestAdapterOptions {
-                    power_preference: wgpu::PowerPreference::HighPerformance,
+                    power_preference: builder.power_preference,
                     compatible_surface: Option::Some(&surface),
                     force_fallback_adapter: false,
                 }
