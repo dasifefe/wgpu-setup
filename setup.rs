@@ -1,6 +1,7 @@
 
 pub struct RendererState {
     pub instance: wgpu::Instance,
+    /// Device only needs to be wrapped in `Arc` for multi-threaded use.
     pub device: Arc<wgpu::Device>,
     pub queue: wgpu::Queue,
     pub option_target: Option<RendererStateTarget>,
